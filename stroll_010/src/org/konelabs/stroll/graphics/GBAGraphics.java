@@ -8,87 +8,91 @@ package org.konelabs.stroll.graphics;
  * <p>
  * Use getLayer(layerNumber) to gain access to a layer
  * </p>
- * 
+ *
  * @author Keldon
- * 
  */
 public final class GBAGraphics extends AbstractGraphics<GBALayer> {
-  // ********************************* PRIVATE VARIABLES ********************
-  // ************************************************************************
-  /** Stores all layers that the Screen will display */
-  private GBALayer layers[];
+    /**
+     * Stores all layers that the Screen will display
+     */
+    private final GBALayer[] layers;
 
-  /** Sets the total number of backgrounds for the layer */
-  private final static int NUM_BACKGROUNDS = 4;
+    /**
+     * Sets the total number of backgrounds for the layer
+     */
+    private final static int NUM_BACKGROUNDS = 4;
 
-  // ********************************** PUBLIC VARIABLES ********************
-  // ************************************************************************
-  /** Settings of the screen */
-  public final static int DEFAULT_WIDTH = 240, DEFAULT_HEIGHT = 160,
-      MAX_PRIORITY = 4, DEFAULT_MODE = 0;
+    /**
+     * Settings of the screen
+     */
+    public final static int DEFAULT_WIDTH = 240, DEFAULT_HEIGHT = 160,
+            MAX_PRIORITY = 4, DEFAULT_MODE = 0;
 
-  /** will return the singleton instance of the Screen */
-  public static GBAGraphics getInstance() {
-    return SingletonScreen.INSTANCE;
-  }
-
-  // ********************************* PRIVATE METHODS **********************
-  // ************************************************************************
-  // constructor
-  private GBAGraphics() {
-    super(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-
-    this.layers = new GBALayer[NUM_BACKGROUNDS];
-
-    // create backgrounds
-    for (int i = 0; i < NUM_BACKGROUNDS; ++i) {
-      GBALayer bg = new GBALayer();
-      this.layers[i] = bg;
-      bg.setPriority(0);
-      bg.setVisible(false);
+    /**
+     * will return the singleton instance of the Screen
+     */
+    public static GBAGraphics getInstance() {
+        return SingletonScreen.INSTANCE;
     }
-  }
 
-  // Singleton Action
-  /**
-   * provides "initialization on demand holder idiom" access to singleton screen
-   */
-  private static class SingletonScreen {
-    private final static GBAGraphics INSTANCE = new GBAGraphics();
-  }
+    private GBAGraphics() {
+        super(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
-  // ******************************* PROTECTED METHODS **********************
-  // ************************************************************************
-  /**
-   * will draw all of the Screen's layers to the specified buffer on the current
-   * line.
-   */
-  protected final void drawLayers(int buffer[]) {
-    for (int i = 0; i < getNumLayers(); ++i) {
-      if (getLayer(i).isVisible()) {
-        getLayer(i).renderLine(buffer, getVCount(), getWidth());
-      }
+        this.layers = new GBALayer[NUM_BACKGROUNDS];
+
+        createBackgrounds();
     }
-  }
 
-  // ********************************** PUBLIC METHODS **********************
-  // ************************************************************************
-  // Screen public methods
+    private void createBackgrounds() {
+        for (int i = 0; i < NUM_BACKGROUNDS; ++i) {
+            GBALayer bg = new GBALayer();
+            this.layers[i] = bg;
+            bg.setPriority(0);
+            bg.setVisible(false);
+        }
+    }
 
-  /** returns the maximum priority that can be given to a layer */
-  public int getMaxPriority() {
-    return MAX_PRIORITY;
-  }
 
-  // **************************** INHERITED METHODS *************************
+    /**
+     * provides "initialization on demand holder idiom" access to singleton screen
+     */
+    private static class SingletonScreen {
+        private final static GBAGraphics INSTANCE = new GBAGraphics();
+    }
 
-  /** returns the number of screen layers */
-  public int getNumLayers() {
-    return NUM_BACKGROUNDS;
-  }
 
-  /** returns the given layer; null is returned if the layer is not loaded */
-  public GBALayer getLayer(int num) {
-    return layers[num];
-  }
+    /**
+     * will draw all of the Screen's layers to the specified buffer on the current
+     * line.
+     */
+    protected final void drawLayers(int[] buffer) {
+        for (int i = 0; i < getNumLayers(); ++i) {
+            if (getLayer(i).isVisible()) {
+                getLayer(i).renderLine(buffer, getVCount(), getWidth());
+            }
+        }
+    }
+
+
+    /**
+     * returns the maximum priority that can be given to a layer
+     */
+    public int getMaxPriority() {
+        return MAX_PRIORITY;
+    }
+
+
+    /**
+     * returns the number of screen layers
+     */
+    public int getNumLayers() {
+        return NUM_BACKGROUNDS;
+    }
+
+    /**
+     * returns the given layer; null is returned if the layer is not loaded
+     */
+    public GBALayer getLayer(int num) {
+        return layers[num];
+    }
 }

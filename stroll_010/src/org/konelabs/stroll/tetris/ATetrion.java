@@ -1,154 +1,150 @@
 package org.konelabs.stroll.tetris;
 
+import java.util.Arrays;
+
 public abstract class ATetrion {
-  private int width, height;
-  private int score;
+    private final int width;
+    private final int height;
+    private int score;
 
-  protected boolean[] clearingRows;
-  protected Block[] playfield;
+    protected boolean[] clearingRows;
+    protected Block[] playfield;
 
-  protected Piece piece;
-  protected TetrionState state;
-  protected int lines;
+    protected Piece piece;
+    protected TetrionState state;
+    protected int lines;
 
-  /** locates completed lines and clears them, but does not drop the rows above */
-  protected void clearLines() {
+    /**
+     * locates completed lines and clears them, but does not drop the rows above
+     */
+    protected void clearLines() {
 
-    int linesCleared = 0;
+        int linesCleared = 0;
 
-    for (int y = 0; y < getHeight(); y++) {
-      boolean lineCleared = true;
-      // find lines to clear
-      for (int x = 0; x < getWidth(); x++) {
-        if (playfield[x + y * getWidth()] == null)
-          lineCleared = false;
-      }
+        for (int y = 0; y < getHeight(); y++) {
+            boolean lineCleared = true;
+            // find lines to clear
+            for (int x = 0; x < getWidth(); x++) {
+                if (playfield[x + y * getWidth()] == null)
+                    lineCleared = false;
+            }
 
-      // clear line
-      if (lineCleared) {
-        linesCleared++;
-        clearingRows[y] = true;
+            // clear line
+            if (lineCleared) {
+                linesCleared++;
+                clearingRows[y] = true;
 
-        for (int x = 0; x < getWidth(); x++) {
-          playfield[x + y * getWidth()].piece.erased = true;
-          playfield[x + y * getWidth()] = null;
+                for (int x = 0; x < getWidth(); x++) {
+                    playfield[x + y * getWidth()].piece.erased = true;
+                    playfield[x + y * getWidth()] = null;
+                }
+            }
         }
-      }
-    }
-    // Scoring: 40 * (n + 1) 100 * (n + 1) 300 * (n + 1) 1200 * (n + 1)
-    int multiplier;
-    switch (linesCleared) {
-    case 1:
-      multiplier = 40;
-      break;
-    case 2:
-      multiplier = 100;
-      break;
-    case 3:
-      multiplier = 300;
-      break;
-    case 4:
-      multiplier = 1200;
-      break;
-    default:
-      multiplier = 0;
-    }
-    this.lines += linesCleared;
-    this.score += multiplier * (getLevel() + 1);
-  }
-
-  /** returns whether collision occurs with block at given offset */
-  protected boolean collides(int x, int y) {
-    boolean[] blocks = this.piece.getBlocks();
-    int pwidth = this.piece.getWidth();
-    int pheight = this.piece.getHeight();
-
-    for (int cx = 0; cx < pwidth; cx++) {
-      for (int cy = 0; cy < pheight; cy++) {
-        int px = x + cx + this.piece.x;
-        int py = y + cy + this.piece.y;
-
-        boolean isPieceBlock = blocks[cx + cy * pwidth];
-        boolean inWall = px < 0 || py < 0 || px >= 10;
-        boolean aboveTetrion = py >= 18;
-
-        if (inWall & isPieceBlock)
-          return true;
-
-        if (inWall | aboveTetrion)
-          continue;
-
-        boolean isFieldBlock = this.playfield[px + py * getWidth()] != null;
-
-        if (isPieceBlock && isFieldBlock)
-          return true;
-      }
+        // Scoring: 40 * (n + 1) 100 * (n + 1) 300 * (n + 1) 1200 * (n + 1)
+        int multiplier = switch (linesCleared) {
+            case 1 -> 40;
+            case 2 -> 100;
+            case 3 -> 300;
+            case 4 -> 1200;
+            default -> 0;
+        };
+        this.lines += linesCleared;
+        this.score += multiplier * (getLevel() + 1);
     }
 
-    return false;
-  }
+    /**
+     * returns whether collision occurs with block at given offset
+     */
+    protected boolean collides(int x, int y) {
+        boolean[] blocks = this.piece.getBlocks();
+        int pwidth = this.piece.getWidth();
+        int pheight = this.piece.getHeight();
 
-  public int getWidth() {
-    return width;
-  }
+        for (int cx = 0; cx < pwidth; cx++) {
+            for (int cy = 0; cy < pheight; cy++) {
+                int px = x + cx + this.piece.x;
+                int py = y + cy + this.piece.y;
 
-  public int getHeight() {
-    return height;
-  }
+                boolean isPieceBlock = blocks[cx + cy * pwidth];
+                boolean inWall = px < 0 || py < 0 || px >= 10;
+                boolean aboveTetrion = py >= 18;
 
-  public int getLevel() {
-    return this.lines / 10;
-  }
+                if (inWall & isPieceBlock)
+                    return true;
 
-  public int getLines() {
-    return this.lines;
-  }
+                if (inWall | aboveTetrion)
+                    continue;
 
-  public Piece getPiece() {
-    return this.piece;
-  }
+                boolean isFieldBlock = this.playfield[px + py * getWidth()] != null;
 
-  public TetrionState getState() {
-    return state;
-  }
+                if (isPieceBlock && isFieldBlock)
+                    return true;
+            }
+        }
 
-  public Block[] getPlayfield() {
-    return this.playfield;
-  }
+        return false;
+    }
 
-  public int getScore() {
-    return this.score;
-  }
+    public int getWidth() {
+        return width;
+    }
 
-  public boolean[] getClearingRows() {
-    return this.clearingRows;
-  }
+    public int getHeight() {
+        return height;
+    }
 
-  public ATetrion(int width, int height) {
-    this.width = width;
-    this.height = height;
+    public int getLevel() {
+        return this.lines / 10;
+    }
 
-    initializeTetrion();
-  }
+    public int getLines() {
+        return this.lines;
+    }
 
-  public void initializeTetrion() {
+    public Piece getPiece() {
+        return this.piece;
+    }
 
-    this.state = TetrionState.start;
+    public TetrionState getState() {
+        return state;
+    }
 
-    this.clearingRows = new boolean[height];
+    public Block[] getPlayfield() {
+        return this.playfield;
+    }
 
-    playfield = new Block[width * height];
-    for (int i = 0; i < playfield.length; i++)
-      playfield[i] = null;
-  }
+    public int getScore() {
+        return this.score;
+    }
 
-  public abstract TetrionState advanceFrame();
+    public boolean[] getClearingRows() {
+        return this.clearingRows;
+    }
 
-  public abstract IGenerator getGenerator();
+    public ATetrion(int width, int height) {
+        this.width = width;
+        this.height = height;
 
-  public abstract void move(int x);
+        initializeTetrion();
+    }
 
-  public abstract void rotate(int dir);
+    public void initializeTetrion() {
 
-  public abstract void setFastDrop(boolean b);
+        this.state = TetrionState.start;
+
+        this.clearingRows = new boolean[height];
+
+        playfield = new Block[width * height];
+        Arrays.fill(playfield, null);
+    }
+
+    public abstract TetrionState advanceFrame();
+
+    public abstract IGenerator getGenerator();
+
+    public abstract void move(int x);
+
+    public abstract void rotate(int dir);
+
+    public abstract void setFastDrop(boolean b);
 }

@@ -4,55 +4,51 @@ import org.konelabs.stroll.graphics.GBAGraphics;
 import org.konelabs.stroll.system.Input;
 
 public class GuiManager {
-  private Screen currentScreen;
+    private Screen currentScreen;
 
-  public GuiManager() {
-    currentScreen = null;
-  }
-
-  public void openScreen(Screen screen) {
-    if (null != currentScreen) {
-      currentScreen.closePage();
+    public GuiManager() {
+        currentScreen = null;
     }
 
-    currentScreen = screen;
-  }
+    public void openScreen(Screen screen) {
+        if (null != currentScreen) {
+            currentScreen.closePage();
+        }
 
-  public void monitor() {
-    while (true) {
-      readKeys();
-      updateFrame();
-    }
-  }
-
-  private final void updateFrame() {
-    if (null != currentScreen) {
-      currentScreen.update();
-      GBAGraphics.getInstance().waitVBL();
-    }
-  }
-
-  private final void readKeys() {
-    Input.updateKeys();
-
-    if (0 != Input.getPressedButtons()) {
-      currentScreen.handleMessage(GuiMessage.createButtonDownMessage(Input
-          .getPressedButtons()));
+        currentScreen = screen;
     }
 
-    if (0 != Input.getReleasedButtons()) {
-      currentScreen.handleMessage(GuiMessage.createButtonUpMessage(Input
-          .getReleasedButtons()));
+    public void monitor() {
+        while (this.currentScreen != null) {
+            readKeys();
+            updateFrame();
+        }
     }
 
-    if (0 != Input.getPressedKeys()) {
-      currentScreen.handleMessage(GuiMessage.createKeyDownMessage(
-          Input.getPressedKeys(), false));
+    private void updateFrame() {
+        if (null != currentScreen) {
+            currentScreen.handleFrame();
+            GBAGraphics.getInstance().waitVBL();
+        }
     }
 
-    if (0 != Input.getReleasedKeys()) {
-      currentScreen.handleMessage(GuiMessage.createKeyUpMessage(Input
-          .getReleasedKeys()));
+    private void readKeys() {
+        Input.updateKeys();
+
+        if (0 != Input.getPressedButtons()) {
+            currentScreen.handleMessage(GuiMessage.createButtonDownMessage(Input.getPressedButtons()));
+        }
+
+        if (0 != Input.getReleasedButtons()) {
+            currentScreen.handleMessage(GuiMessage.createButtonUpMessage(Input.getReleasedButtons()));
+        }
+
+        if (0 != Input.getPressedKeys()) {
+            currentScreen.handleMessage(GuiMessage.createKeyDownMessage(Input.getPressedKeys(), false));
+        }
+
+        if (0 != Input.getReleasedKeys()) {
+            currentScreen.handleMessage(GuiMessage.createKeyUpMessage(Input.getReleasedKeys()));
+        }
     }
-  }
 }
