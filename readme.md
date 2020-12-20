@@ -14,10 +14,10 @@ It replicates the following:
 2. Wall kick behaviour
 3. Rotation of blocks (including rules for rotations that can allow you to tight fittings)
 
-Improvements and missing features:
 
-:heavy_plus_sign: Piece generation is improved (allocation of pieces is well distributed so that you never have repeat tetrion, or long streams with any tetrion absent).
 
-:heavy_minus_sign: Does not display next tetrion.
-
-:heavy_minus_sign: You actually can't lose.
+:joystick: | Improvements and missing features
+-|-
+:heavy_plus_sign: | Piece generation is improved (allocation of pieces is well distributed so that you never have repeat tetrion, or long streams with any tetrion absent).
+:heavy_minus_sign: | Does not display next tetrion.
+:heavy_minus_sign: | You actually can't lose.
