@@ -16,8 +16,8 @@ It replicates the following:
 
 Improvements and missing features:
 
-\+ Piece generation is improved (allocation of pieces is well distributed so that you never have repeat tetrion, or long streams with any tetrion absent).
+:heavy_plus_sign: Piece generation is improved (allocation of pieces is well distributed so that you never have repeat tetrion, or long streams with any tetrion absent).
 
-\- Does not display next tetrion.
+:heavy_minus_sign: Does not display next tetrion.
 
-\- You actually can't lose.
+:heavy_minus_sign: You actually can't lose.
